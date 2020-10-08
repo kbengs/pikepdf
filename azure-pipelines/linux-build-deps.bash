@@ -16,3 +16,7 @@ pushd $1/qpdf
 ./configure &&
 make -j install &&
 popd
+
+# For Python 3.9, we need to build lxml from source until they provide a binary
+# wheel for it.
+yum install -y libxslt-devel libxml2-devel
