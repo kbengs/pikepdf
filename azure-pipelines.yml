@@ -36,7 +36,6 @@ stages:
           - bash: |
               python -m pip install --upgrade pip
               python setup.py sdist
-              python -m pip install pybind11
               python -m pip install --verbose dist/*.tar.gz
               python -m pip install -r requirements/test.txt
               python -m pip install pytest-cov
@@ -108,7 +107,6 @@ stages:
         pool: { vmImage: "macOS-10.14" }
         variables:
           cibw_before_all: brew install qpdf
-          cibw_before_build: pip install pybind11
         steps:
           - task: UsePythonVersion@0
           - bash: source azure-pipelines/build.bash

@@ -4,8 +4,9 @@ from os import cpu_count, environ
 from os.path import dirname, exists, join, sep
 from tempfile import TemporaryDirectory
 
-from pybind11.setup_helpers import Pybind11Extension
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup  # isort:skip
+
+from pybind11.setup_helpers import Pybind11Extension  # isort:skip
 
 extra_includes = []
 extra_library_dirs = []
