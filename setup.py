@@ -1,12 +1,15 @@
 import sys
 from glob import glob
-from os import cpu_count, environ
-from os.path import dirname, exists, join, sep
-from tempfile import TemporaryDirectory
+from os import environ
+from os.path import dirname, join
 
-from setuptools import find_packages, setup  # isort:skip
+from setuptools import find_packages, setup
 
-from pybind11.setup_helpers import Pybind11Extension  # isort:skip
+try:
+    from pybind11.setup_helpers import Pybind11Extension, build_ext
+except ImportError:
+    from setuptools import Extension as Pybind11Extension
+    from setuptools.command.build_ext import build_ext
 
 extra_includes = []
 extra_library_dirs = []
@@ -17,6 +20,13 @@ if qpdf_source_tree:
     extra_library_dirs.append(join(qpdf_source_tree, 'libqpdf/build/.libs'))
 if 'bsd' in sys.platform:
     extra_includes.append('/usr/local/include')
+
+try:
+    from setuptools_scm import get_version
+
+    __version__ = get_version()
+except ImportError:
+    __version__ = '0.0.1'
 
 
 ext_modules = [
@@ -64,16 +74,19 @@ if __name__ == '__main__':  # for mp_compile
             'lxml >= 4.0',
             'Pillow >= 6',  # only needed for manipulating images
         ],
+        setup_requires=[
+            'setuptools >= 50',
+            'wheel >= 0.35',
+            'setuptools_scm[toml] >= 4.1',
+            'setuptools_scm_git_archive',
+            'pybind11 >= 2.6.0, <3',
+        ],
         extras_require={'docs': docs_require},
         zip_safe=False,
         python_requires='>=3.6',
-        setup_requires=[
-            'setuptools_scm',
-            'setuptools_scm_git_archive',
-            'pybind11 >= 2.6.0, < 3',
-        ],
         use_scm_version=True,
         tests_require=tests_require,
+        cmd_class={"build_ext": build_ext},
         package_dir={'': 'src'},
         packages=find_packages('src'),
         package_data={'': ['*.txt'], 'pikepdf': ['*.dll']},
